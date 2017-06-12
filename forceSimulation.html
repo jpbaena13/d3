@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<title>D3 v4 - force layout</title>
+<style>
+html, body, #graph {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+svg {
+    border: thin solid #CCC;
+}
+</style>
+</head>
+
+<body>
+<!-- <div id="graph"></div> -->
+    
+    
+    
+<script src="d3.v4.min.js"></script>
+<script>
+var width = 900,
+    height = 700;
+
+var svg = d3.select("body").append("svg").attr("width",width)
+            .attr("height",height);
+
+var nodeData = [
+                    {'x':225,'y':100,'id':1},
+                    {'x':22,'y':400,'id':2},
+                    {'x':145,'y':80,'id':3},
+                ];
+ 
+
+ var node = svg.selectAll("circle")
+            .data(nodeData)
+            .enter()
+            .append("circle")
+                .attr("r", 30)
+                // .attr("cx",function(d){ return d.x }).attr("cy", function(d){ return d.y })
+                // .attr("cx", width/2).attr("cy", height/2)
+                .attr("fill","black").attr("opacity",0.5)
+                .call(d3.drag()
+                .on("start",dragstarted)
+                .on("drag",dragged)
+                .on("end",dragended));
+ 
+ function dragstarted(d)
+ { 
+    simulation.restart();
+    simulation.alpha(1.0);
+    d.fx = d.x;
+    d.fy = d.y;
+    console.log(d)
+ }
+
+ function dragged(d)
+ {
+    d.fx = d3.event.x;
+    d.fy = d3.event.y;
+ }
+
+ function dragended(d)
+ {
+    d.fx = null;
+    d.fy = null;
+    simulation.alphaTarget(0.1);
+ }
+
+ function ticked(){
+     node.attr("cx", function(d){ return d.x;})
+         .attr("cy", function(d){ return d.y;})
+ }
+
+ var simulation = d3.forceSimulation(nodeData);
+ simulation.force("xAxis", d3.forceX().x(width/2)).force("yAxis", d3.forceY().y(height/2));
+ simulation.force("repelForce", d3.forceManyBody().strength(-140).distanceMax(100).distanceMin(10))
+ simulation.on("tick", ticked);
+
+// !(function(){
+//     "use strict"
+
+//     var width = document.querySelector("#graph").clientWidth
+//     var height = document.querySelector("#graph").clientHeight
+//     var margin = {top:0, left:0, bottom:0, right:0 }
+//     var chartWidth = width - (margin.left+margin.right)
+//     var chartHeight = height - (margin.top+margin.bottom)
+//     var svg = d3.select("#graph").append("svg").attr("width", width).attr("height", height)
+//     var range = 10
+//     var nodes = d3.range(0, range).map(function(d){ return {label: "l"+d ,r:~~d3.randomUniform(8, 28)()}});
+
+//     var simulation = d3.forceSimulation()
+//         .force("collide",d3.forceCollide( function(d){return d.r + 8 }).iterations(16) )
+//         // .force("charge", d3.forceManyBody())
+//         .force("center", function(d){ return d})
+//         // .force("y", d3.forceY(0))
+ 
+//     var node = svg.append("g")
+//         .attr("class", "nodes")
+//         .attr('transform', 'translate(' + chartWidth/2 + ',' + chartHeight/2 + ')')
+//         .selectAll("circle")
+//         .data(nodes)
+//         .enter().append("circle")
+//         .attr("r", function(d){  return d.r })
+//         // .call(d3.drag()
+//         //     .on("start", dragstarted)
+//         //     .on("drag", dragged)
+//         //     .on("end", dragended));    
+    
+    
+//     var ticked = function() {
+//         node
+//             .attr("cx", function(d) { return d.x; })
+//             .attr("cy", function(d) { return d.y; });
+//     }  
+    
+//     simulation
+//         .nodes(nodes)
+//         .on("tick", ticked);
+    
+//     // function dragstarted(d) {
+//     //     if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+//     //     d.fx = d.x;
+//     //     d.fy = d.y;
+//     // }
+    
+//     // function dragged(d) {
+//     //     d.fx = d3.event.x;
+//     //     d.fy = d3.event.y;
+//     // }
+    
+//     // function dragended(d) {
+//     //     if (!d3.event.active) simulation.alphaTarget(0);
+//     //     d.fx = null;
+//     //     d.fy = null;
+//     // } 
+// }());
+</script>    
+</body>
+</html>

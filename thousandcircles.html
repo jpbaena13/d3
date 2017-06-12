@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8">
+	</head>
+	<body>
+		<svg width="2000" height="2000"></svg>
+		<script type="text/javascript" src="d3.v4.min.js"></script>
+		<script>
+			svg = d3.select('svg');
+			for(var i = 0; i < 10000; i++) {
+				var x = Math.random()*2000;
+				var y = Math.random()*2000;
+				svg.append('circle')
+						.attr('r', 10)
+						.attr('fill', 'red')
+						.attr('transform', 'translate(' + [x,y] + ')')
+						.on('mouseover', function() {
+							d3.selectAll('circle').style('opacity', 0.1)
+							d3.select(this).style('opacity', 1)
+						})
+						.on('mouseout', function(){
+							d3.selectAll('circle').style('opacity', 1)
+						})
+			}
+		</script>
+	</body>
+</html>

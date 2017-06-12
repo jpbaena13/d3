@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8">
+		
+		<style>
+			div {
+				border: thin solid red;
+				height: 10px;
+				margin: 2px;
+			}
+			svg {
+				border: thin solid #ccc;
+			}
+			.node circle {
+				fill: #fff;
+				stroke: steelblue;
+				stroke-width: 3px;
+			}
+
+			.node text {
+				font: 12px sans-serif;
+			}
+
+			.link {
+				fill: none;
+				stroke: #ccc;
+				stroke-width: 2px;
+			}
+
+		</style>
+		
+	</head>
+	<body>
+		<script type="text/javascript" src="d3.v4.min.js"></script>
+		<script>
+			var width = 500
+				,height = 500
+				,radius = Math.min(width, height) / 2
+				,color = d3.scaleOrdinal(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"])
+				,canvas = d3.select('body').append('canvas').attr('width', width).attr('height', height)
+				,canvas = document.querySelector('canvas')
+				,context = canvas.getContext('2d')
+				,data = [10,20,35,30,40,38,32,21,54,43,23,23,12]
+				,pie = d3.pie().sort(null)
+				,arc = d3.arc().outerRadius(100).innerRadius(80).context(context); //50*(i+1)
+
+			context.translate(width/2, height/2);
+			var arcs = pie(data);
+
+			arcs.forEach(function(d, i){
+				context.beginPath();
+				arc(d);
+				context.fillStyle = color(i);
+				context.fill();
+			});
+
+			context.beginPath();
+			arcs.forEach(arc);
+			context.strokeStyle = '#fff';
+			context.stroke();
+
+
+				
+			
+			// function nd(data) {
+			// 	var arr = [];
+			// 	var i = 0, j = -1;
+			// 	data.forEach(function(d){
+			// 		if (i%5 == 0) {
+			// 			j++;
+			// 			arr[j] = [];
+			// 		}
+			// 		arr[j].push(d);
+			// 		arr[j].push(2);
+			// 		i++;
+			// 	});
+			// 	return arr;
+			// }
+
+			// data = nd(data);
+
+			// data.forEach(function(e, i) {
+			// 	var piemap = pie(e);
+
+			// 	var arc = g.selectAll('.arc' + i)
+			// 				 .data(piemap)
+			// 				 .enter()
+			// 				 .append('g')
+			// 				 	.attr('class', 'arc' + i);
+				
+			// 	path = d3.arc().outerRadius(50*(i+1)).innerRadius(50*(i+1)-10);
+
+			// 	arc.append('path')
+			// 		.attr('d', path)
+			// 		.attr('fill', function(d){ return d.value == 2 ? '#fff' : color(d.value) })
+			// });
+
+		</script>
+	</body>
+</html>
