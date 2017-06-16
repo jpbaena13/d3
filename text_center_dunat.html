@@ -43,7 +43,7 @@
                     .attr('class', 'monthSeg');
 
             seg.append('path')
-                    .attr('class', 'monthArc')                    
+                    .attr('class', 'monthArc')
                     .attr('d', path)
                     .each(function(d, i){
                         var firstArcSection = /(^.+?)L/;
@@ -62,7 +62,7 @@
                             newArc = 'M' + newStart + 'A' + newMiddle + '0 0 0 ' + newEnd;
                         }
 
-                        seg.append('path')
+                        d3.select(this.parentNode).append('path')
                             .attr('class', 'hideMonthArc')
                             .attr('id', 'monthArc_' + i)
                             .attr('d', newArc)
