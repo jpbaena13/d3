@@ -43,11 +43,16 @@
 				,pie = d3.pie().sort(null)
 				,data = [10,20,35,30,40,38,32,21,54,43,23,23,12]
 			
+			data = [];
+			for(var i = 0; i < (30*13); i++) {
+				data.push(20);
+			}
+
 			function nd(data) {
 				var arr = [];
 				var i = 0, j = -1;
 				data.forEach(function(d){
-					if (i%5 == 0) {
+					if (i%30 == 0) {
 						j++;
 						arr[j] = [];
 					}
@@ -69,7 +74,7 @@
 							 .append('g')
 							 	.attr('class', 'arc' + i);
 				
-				path = d3.arc().outerRadius(50*(i+1)).innerRadius(50*(i+1)-10);
+				path = d3.arc().outerRadius(50 + 10*(i+1)).innerRadius(50 + 10*(i+1)-2);
 
 				arc.append('path')
 					.attr('d', path)

@@ -1,0 +1,85 @@
+<!DOCTYPE HTML>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            .monthArc {
+                stroke: #777;
+                fill: transparent;
+            }
+            .monthText {
+
+            }
+        </style>
+    </head>
+    <body>
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+        <script>
+            var svg = d3.select('body').append('svg').attr('width', 600).attr('height', 600);
+
+            var monthData = [
+                { name: 'Enero' },
+                { name: 'Febrero' },
+                { name: 'Marzo' },
+                { name: 'Abril' },
+                { name: 'Mayo' },
+                { name: 'Junio' },
+                { name: 'Julio' },
+                { name: 'Agosto' },
+                { name: 'Septiembre' },
+                { name: 'Octubre' },
+                { name: 'Noviembre' },
+                { name: 'Diciembre' },
+            ];
+
+            var path = d3.arc().outerRadius(200).innerRadius(180);
+            var pie = d3.pie().startAngle(-Math.PI/2).endAngle(-Math.PI/2+2*Math.PI).value(1).padAngle(0.02).sort(null);
+            var g = svg.append('g')
+                        .attr('transform', 'translate(300,300)')
+
+            var seg = g.selectAll('g')
+                .data(pie(monthData)).enter()
+                .append('g')
+                    .attr('class', 'monthSeg');
+
+            seg.append('path')
+                    .attr('class', 'monthArc')                    
+                    .attr('d', path)
+                    .each(function(d, i){
+                        var firstArcSection = /(^.+?)L/;
+                        var newArc = firstArcSection.exec( d3.select(this).attr('d') )[1];
+                        newArc = newArc.replace(/,/g, " ");
+
+                        if (d.endAngle > Math.PI/2) {
+                            var startLoc = /M(.*?)A/,
+                            middleLoc   = /A(.*?)0 0 1/,
+                            endLoc = /0 0 1 (.*?)$/;
+
+                            var newStart = endLoc.exec( newArc )[1];
+                            var newEnd = startLoc.exec( newArc )[1];
+                            var newMiddle = middleLoc.exec( newArc )[1];
+
+                            newArc = 'M' + newStart + 'A' + newMiddle + '0 0 0 ' + newEnd;
+                        }
+
+                        seg.append('path')
+                            .attr('class', 'hideMonthArc')
+                            .attr('id', 'monthArc_' + i)
+                            .attr('d', newArc)
+                            .style('fill', 'none');
+                    });
+
+            seg.append('text')
+                    .attr('class', 'monthText')
+                    .attr('x', 5)
+                    .attr('dy', function(d){ return d.endAngle < Math.PI/2 ? 15 : -5})
+                    .append('textPath')
+                        .attr('text-anchor', 'middle')
+                        .attr('startOffset', '50%')
+                        .attr('xlink:href', function(d,i){ return '#monthArc_' + i})
+                        .text(function(d){ return d.data.name })
+
+            
+        </script>
+    </body>
+</html>
