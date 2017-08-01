@@ -1,0 +1,104 @@
+<!DOCTYPE HTML>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <div id="chart"></div>
+    <script type="text/javascript" src="d3.v4.min.js"></script>
+    <script>
+        var width = 700,
+            height = 700,
+            start = 0,
+            end = 2.25,
+            numSpirals = 3
+            margin = {top:50, bottom:50, left:50, right:50};
+
+        var theta = function(r) {
+            return numSpirals * Math.PI * r;
+        }
+
+        var color = d3.scaleOrdinal(d3.schemeCategory10);
+
+        var r = d3.min([width, height]) / 2 - 40;
+
+        var radius = d3.scaleLinear()
+                       .domain([start, end])
+                       .range([40, r]);
+
+        var svg = d3.select("#chart")
+                    .append("svg")
+                      .attr("width", width + margin.right + margin.left)
+                      .attr("height", height + margin.left + margin.right)
+                      .append("g")
+                        .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+        var points = d3.range(start, end + 0.001, (end - start) / 1000);
+        points = d3.range(0, 2, 0.05);
+
+        var spiral = d3.radialLine()
+                        .curve(d3.curveCardinal)
+                        .angle(theta)
+                        .radius(radius);
+
+        var path = svg.append("path")
+                      .datum(points)
+                      .attr("id", "spiral")
+                      .attr("d", function(d){ var s = spiral(d); return s; })
+                      .style("fill", "none")
+                      .style("stroke", "steelblue");
+
+        var spiralLength = path.node().getTotalLength(),
+            N = 365,
+            barWidth = (spiralLength / N) - 1
+            ,someData = [];
+
+        for (var i = 0; i < N; i++) {
+            var currentDate = new Date();
+            currentDate.setDate(currentDate.getDate() + i);
+            someData.push({
+                date: currentDate,
+                value: Math.random(),
+                group: currentDate.getMonth()
+            });
+        }
+
+        var timeScale = d3.scaleTime()
+                          .domain(d3.extent(someData, function(d){ return d.date; }))
+                          .range([0, spiralLength]);
+
+        svg.selectAll('rect')
+            .data(someData)
+            .enter()
+            .append('rect')
+            .attr('x', function(d,i) {
+                var linePer = timeScale(d.date),
+                posOnLine = path.node().getPointAtLength(linePer),
+                angleOnLine = path.node().getPointAtLength(linePer - barWidth);
+
+                d.linePer = linePer; // % distance are on the spiral
+                d.x = posOnLine.x; // x postion on the spiral
+                d.y = posOnLine.y; // y position on the spiral
+        
+                d.a = (Math.atan2(angleOnLine.y, angleOnLine.x) * 180 / Math.PI) - 90; //angle at the spiral position
+
+                return d.x;
+            })
+            .attr("y", function(d){
+                return d.y;
+            })
+            .attr("width", function(d){
+                return barWidth;
+            })
+            .attr("height", function(d){
+                return 10
+            })
+            .style("fill", function(d){return color(d.group);})
+            .style("stroke", "none")
+            .attr("transform", function(d){
+                return "rotate(" + d.a + "," + d.x  + "," + d.y + ")"; // rotate the bar
+            });
+
+    </script>
+</body>
+</html>

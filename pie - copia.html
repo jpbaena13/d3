@@ -1,0 +1,89 @@
+<!DOCTYPE HTML>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8">
+		
+		<style>
+			div {
+				border: thin solid red;
+				height: 10px;
+				margin: 2px;
+			}
+			svg {
+				border: thin solid #ccc;
+			}
+			.node circle {
+				fill: #fff;
+				stroke: steelblue;
+				stroke-width: 3px;
+			}
+
+			.node text {
+				font: 12px sans-serif;
+			}
+
+			.link {
+				fill: none;
+				stroke: #ccc;
+				stroke-width: 2px;
+			}
+
+		</style>
+		
+	</head>
+	<body>
+		<script type="text/javascript" src="d3.v4.min.js"></script>
+		<script>
+			var width = 800
+				,height = 800
+				,radius = Math.min(width, height) / 2
+				,svg = d3.select('body').append('svg').style('width', width).style('height', height)
+				,g = svg.append('g').attr('transform', 'translate(' + width/2 + ',' + height/2 + ')')
+				,color = d3.scaleOrdinal(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"])
+				,pie = d3.pie().sort(null).padAngle('0.03')
+				,data = [10,20,35,30,40,38,32,21,54,43,23,23,12]
+			
+			// data = [];
+			// for(var i = 0; i < (30*13); i++) {
+			// 	data.push(20);
+			// }
+
+			// function nd(data) {
+			// 	var arr = [];
+			// 	var i = 0, j = -1;
+			// 	data.forEach(function(d){
+			// 		if (i%30 == 0) {
+			// 			j++;
+			// 			arr[j] = [];
+			// 		}
+			// 		arr[j].push(d);
+			// 		arr[j].push(2);
+			// 		i++;
+			// 	});
+			// 	return arr;
+			// }
+
+			// data = nd(data);
+			// 
+			// 
+
+			data.forEach(function(e, i) {
+
+				var piemap = pie([{value: 1, color: e},{value: 1, color: e},{value: 1, color: e},{value: 1, color: e},{value: 1, color: e},{value: 1, color: e}]);
+
+				var arc = g.selectAll('.arc' + i)
+							 .data(piemap)
+							 .enter()
+							 .append('g')
+							 	.attr('class', 'arc' + i);
+				
+				path = d3.arc().outerRadius(50 + 20*(i+1)).innerRadius(50 + 20*(i+1)-10);
+
+				arc.append('path')
+					.attr('d', path)
+					.attr('fill', function(d){ color(d.value) })
+			});
+
+		</script>
+	</body>
+</html>
